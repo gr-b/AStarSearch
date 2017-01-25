@@ -12,12 +12,16 @@ def gen_board(n, m):
 
 
 def print_board(board):
+    bstr= ""
     for row in board:
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
         rowStr = rowStr.rstrip()
         print(rowStr)
+        bstr += rowStr
+    print(bstr)
+        #print(rowStr)
 
 # Save board to file
 
@@ -35,30 +39,49 @@ def save_board(board, filename):
         f2.truncate()
         f2.close()
 
+##def read_board(filename):
+##    f = open(filename, 'r')
+##    boardStr = f.read(1000)
+##    chars = boardStr.split('\t')
+##
+##    i = 0
+##    newboard = []
+##    j = 0
+##    while i < len(chars):
+##        char = '#'
+##        tmp = []
+##
+##        while char != '\n':
+##            char = chars[j]
+##            i += 1
+##            j += 1
+##            #print(char)
+##            tmp += char
+##        newboard += [tmp]
+##
+##    return newboard
+
 def read_board(filename):
     f = open(filename, 'r')
     boardStr = f.read(1000)
     chars = boardStr.split('\t')
 
-    i = 0
-    newboard = []
-    j = 0
-    while i < len(chars):
-        char = '#'
-        tmp = []
-        
-        while char != '\n':
-            char = chars[j]
-            i += 1
-            j += 1
-            #print(char)
-            tmp += char
-        newboard += [tmp]
-        
-    return newboard
+    board = []
+    row = []
+    for c in chars:
+        if "\n" in c:
+            board += [row]
+            row = []
+        else:
+            row += c
+
+    f.close()
+    return board
 
 
-    
+
+
+
 
 class Space(object):
     def __init__(self, x, y, terrain, accessible):
