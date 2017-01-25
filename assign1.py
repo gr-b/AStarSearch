@@ -52,4 +52,12 @@ def read_board(filename):
 
 
     
-    
+
+class Space(object):
+    def __init__(self, x, y, terrain, accessible):
+        self.x = x
+        self.y = y
+        self.terrain = terrain
+        self.accessible = accessible
+
+
