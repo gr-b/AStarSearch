@@ -50,20 +50,31 @@ def read_board(filename):
     f.close()
     return board
 
-# node - The current node we are searching.
+def addToList(node, queue):
+    i = 0
+    cost = node.cost + node.hCost
+    while(cost < queue[i].cost + queue[i].hCost):
+        i++
+    insert(i, node)
+    
+
 # queue - A sorted list of nodes to expand. Sorted based on the cost to
-#   get to the node plus the heuristic cost.
+#   get to the node plus the heuristic cost. (starts continaing oonly the start node)
 # h - The heuristic function to use. 
-def search_node(node, queue, h):
-    pass
+def search_node(queue, h):
+    node = queue.pop()
+    #forward n -> node.col + n*direction[0], node.row + n*direction[1] 
+    #backward direction = [-1*direction[0], -1*direction[1]]
+    #right direction = [direction[1],-1*direction[0]]
+    #left direction = [-1*direction[1], direction[0]]
 
 # Creates a node with the position of the s in the given board.
 def get_initial_node(board):
     for i in range(len(board)):
         for j in range(len(board[i])):
             if board[i][j] == 'S':
-                x, y = (i, j)
-    return Node(x, y, 'N', 0, [], [])
+                row, col = (i, j)
+    return Node(col, row, [0,1], 0, 0, [], []) #col,row
     
     
     
@@ -76,13 +87,12 @@ class Space(object):
         self.accessible = accessible
 
 class Node(object):
-    def __init__(self, x, y, direction, cost, actions, children):
-        self.x = x
-        self.y = y
+    def __init__(self, col, row, direction, cost, hCost, actions, children):
+        self.col = col
+        self.row = row
         self.direction = direction
         self.cost = cost
+        self.hCost = hCost
         self.actions = actions
         self.children = children
         
-
-
