@@ -27,13 +27,8 @@ def save_board(board, filename):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
-        rowStr = rowStr.rstrip()
         f.write(rowStr + '\n')
     f.close()
-    with open(filename, 'rb+') as f2:
-        f2.seek(-1, os.SEEK_END)
-        f2.truncate()
-        f2.close()
 
 def read_board(filename):
     f = open(filename, 'r')
@@ -63,5 +58,15 @@ class Space(object):
         self.y = y
         self.terrain = terrain
         self.accessible = accessible
+
+class Node(object):
+    def __init__(self, x, y, direction, cost, actions, children):
+        self.x = x
+        self.y = y
+        self.direction = direction
+        self.cost = cost
+        self.actions = actions
+        self.children = children
+        
 
 
