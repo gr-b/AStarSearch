@@ -66,6 +66,7 @@ def read_board(filename):
     f = open(filename, 'r')
     boardStr = f.read(1000)
     chars = boardStr.split('\t')
+    print(chars)
 
     board = []
     row = []
@@ -73,6 +74,8 @@ def read_board(filename):
         if "\n" in c:
             board += [row]
             row = []
+            if len(c)>1:
+                row += c[1]
         else:
             row += c
 
