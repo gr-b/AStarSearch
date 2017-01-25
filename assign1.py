@@ -35,15 +35,20 @@ def read_board(filename):
 
     i = 0
     newboard = []
+    j = 0
     while i < len(chars):
         char = '#'
         tmp = []
+        
         while char != '\n':
+            char = chars[j]
+            i += 1
+            j += 1
+            #print(char)
             tmp += char
-        newboard += tmp
+        newboard += [tmp]
         
-        
-    print_board(newboard)
+    return newboard
 
 
     
