@@ -65,83 +65,89 @@ def getCost(str):
     else:
         return int(str);
 
-def expandNode(node, queue, board, h):
-    newActions = list(node.actions)
-    
+def expandNode(node, queue, board, h): 
     f = node.direction
-    r = [f[1],-1*f[0]]
-    l = [-1*f[1], f[0]]
+    r = [-1*f[1], f[0]]
+    l = [f[1], -1*f[0]]
     b = [-1*f[0], -1*f[1]]
     
+    newActions = list(node.actions)
     spot = [node.row+f[0], node.col+f[1]] #forward
     if(spot[0] < len(board) and spot[1] < len(board[0])):     
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("f");
-            n = Node(spot[0], spot[1], f, node.cost + getCost(board[spot[0]][spot[1]]), 0, newActions);
+            n = Node(spot[0], spot[1], f, node.cost + getCost(board[spot[0]][spot[1]]), 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
             
+    newActions = list(node.actions)        
     spot = [node.row+3*f[0], node.col+3*f[1]]; #jump forward
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("j");
-            n = Node(spot[0], spot[1], f, node.cost + 20, 0, newActions);
+            n = Node(spot[0], spot[1], f, node.cost + 20, 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
             
+    newActions = list(node.actions)        
     spot = [node.row+r[0], node.col+r[1]]; #right
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("r");
             newActions.append("f");
-            n = Node(spot[0], spot[1], r, node.cost + (1/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, newActions);
+            n = Node(spot[0], spot[1], r, node.cost + (1/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
-            
+    
+    newActions = list(node.actions)        
     spot = [node.row+3*r[0], node.col+3*r[1]]; #jump right
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("r");
             newActions.append("j");
-            n = Node(spot[0], spot[1], r, node.cost + (1/3)*getCost(board[node.row][node.col]) + 20, 0, newActions);
+            n = Node(spot[0], spot[1], r, node.cost + (1/3)*getCost(board[node.row][node.col]) + 20, 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
-            
+    
+    newActions = list(node.actions)        
     spot = [node.row+l[0], node.col+l[1]]; #left
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("l");
             newActions.append("f");
-            n = Node(spot[0], spot[1], l, node.cost + (1/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, newActions);
+            n = Node(spot[0], spot[1], l, node.cost + (1/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
-            
+    
+    newActions = list(node.actions)        
     spot = [node.row+3*l[0], node.col+3*l[1]]; #jump left
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("l");
             newActions.append("j");
-            n = Node(spot[0], spot[1], l, node.cost + (1/3)*getCost(board[node.row][node.col]) + 20, 0, newActions);
+            n = Node(spot[0], spot[1], l, node.cost + (1/3)*getCost(board[node.row][node.col]) + 20, 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
-            
+    
+    newActions = list(node.actions)        
     spot = [node.row+b[0], node.col+b[1]]; #back
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("l");
             newActions.append("l");
             newActions.append("f");
-            n = Node(spot[0], spot[1], b, node.cost + (2/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, newActions);
+            n = Node(spot[0], spot[1], b, node.cost + (2/3)*getCost(board[node.row][node.col]) + getCost(board[spot[0]][spot[1]]), 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
-            
+    
+    newActions = list(node.actions)        
     spot = [node.row+3*b[0], node.col+3*b[1]]; #jump back
     if(spot[0] < len(board) and spot[1] < len(board[0])):
         if(board[spot[0]][spot[1]] != '#'):
             newActions.append("l");
             newActions.append("l");
             newActions.append("j");
-            n = Node(spot[0], spot[1], b, node.cost + (2/3)*getCost(board[node.row][node.col]) + 20, 0, newActions);
+            n = Node(spot[0], spot[1], b, node.cost + (2/3)*getCost(board[node.row][node.col]) + 20, 0, list(newActions));
             n.hCost = h(n);
             addToList(n, queue);
 
@@ -150,8 +156,8 @@ def expandNode(node, queue, board, h):
 # h - The heuristic function to use. 
 def search_node(queue, board, h):
     node = queue.pop()
-    #print(node.actions)
     if(board[node.row][node.col][0] == 'G'):
+        print(node.actions)
         return node
     expandNode(node, queue, board, h);
     search_node(queue, board, h)
