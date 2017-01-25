@@ -1,6 +1,7 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
 import random
+import os
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
 def gen_board(n, m):
@@ -16,6 +17,7 @@ def print_board(board):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
+        rowStr = rowStr.rstrip()
         print(rowStr)
         #print(rowStr)
 
