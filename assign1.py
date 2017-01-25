@@ -56,6 +56,9 @@ def read_board(filename):
     f.close()
     return board
 
+# node - The current node we are searching. 
+def search_node(node, queue)
+
     
 
 class Space(object):
