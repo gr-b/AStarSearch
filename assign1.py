@@ -24,7 +24,7 @@ def save_board(board, filename):
     for row in board:
         rowStr = ""
         for spot in row:
-            rowStr+= spot + " "
+            rowStr+= spot + "\t"
         f.write(rowStr + '\n')
     f.close()
 
