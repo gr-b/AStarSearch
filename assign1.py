@@ -1,7 +1,6 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
 import random
-import os
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
 def gen_board(n, m):
@@ -17,7 +16,6 @@ def print_board(board):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
-        rowStr = rowStr.rstrip()
         print(rowStr)
         #print(rowStr)
 
@@ -31,10 +29,6 @@ def save_board(board, filename):
             rowStr+= spot + "\t"
         f.write(rowStr + '\n')
     f.close()
-    with open(filename, 'rb+') as f2:
-        f2.seek(-1, os.SEEK_END)
-        f2.truncate()
-        f2.close()
 
 def read_board(filename):
     f = open(filename, 'r')
@@ -56,9 +50,22 @@ def read_board(filename):
     f.close()
     return board
 
-# node - The current node we are searching. 
-def search_node(node, queue)
+# node - The current node we are searching.
+# queue - A sorted list of nodes to expand. Sorted based on the cost to
+#   get to the node plus the heuristic cost.
+# h - The heuristic function to use. 
+def search_node(node, queue, h):
+    pass
 
+# Creates a node with the position of the s in the given board.
+def get_initial_node(board):
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] == 'S':
+                x, y = (i, j)
+    return Node(x, y, 'N', 0, [], [])
+    
+    
     
 
 class Space(object):
