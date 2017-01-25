@@ -31,6 +31,10 @@ def save_board(board, filename):
             rowStr+= spot + "\t"
         f.write(rowStr + '\n')
     f.close()
+    with open(filename, 'rb+') as f2:
+        f2.seek(-1, os.SEEK_END)
+        f2.truncate()
+        f2.close()
 
 def read_board(filename):
     f = open(filename, 'r')
