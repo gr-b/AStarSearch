@@ -1,7 +1,6 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
 import random
-import os
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
 def gen_board(n, m):
@@ -17,10 +16,6 @@ def print_board(board):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
-        rowStr = rowStr.rstrip()
-        print(rowStr)
-        bstr += rowStr
-    print(bstr)
         print(rowStr)
         #print(rowStr)
 
@@ -32,13 +27,8 @@ def save_board(board, filename):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
-        rowStr = rowStr.rstrip()
         f.write(rowStr + '\n')
     f.close()
-    with open(filename, 'rb+') as f2:
-        f2.seek(-1, os.SEEK_END)
-        f2.truncate()
-        f2.close()
 
 ##def read_board(filename):
 ##    f = open(filename, 'r')
@@ -51,7 +41,7 @@ def save_board(board, filename):
 ##    while i < len(chars):
 ##        char = '#'
 ##        tmp = []
-##
+##        
 ##        while char != '\n':
 ##            char = chars[j]
 ##            i += 1
@@ -59,7 +49,7 @@ def save_board(board, filename):
 ##            #print(char)
 ##            tmp += char
 ##        newboard += [tmp]
-##
+##        
 ##    return newboard
 
 def read_board(filename):
@@ -86,9 +76,7 @@ b = read_board("board2")
 print_board(b)
 
 
-
-
-
+    
 
 class Space(object):
     def __init__(self, x, y, terrain, accessible):
