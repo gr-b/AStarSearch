@@ -35,28 +35,6 @@ def save_board(board, filename):
         f2.truncate()
         f2.close()
 
-##def read_board(filename):
-##    f = open(filename, 'r')
-##    boardStr = f.read(1000)
-##    chars = boardStr.split('\t')
-##
-##    i = 0
-##    newboard = []
-##    j = 0
-##    while i < len(chars):
-##        char = '#'
-##        tmp = []
-##        
-##        while char != '\n':
-##            char = chars[j]
-##            i += 1
-##            j += 1
-##            #print(char)
-##            tmp += char
-##        newboard += [tmp]
-##        
-##    return newboard
-
 def read_board(filename):
     f = open(filename, 'r')
     boardStr = f.read(1000)
@@ -76,10 +54,6 @@ def read_board(filename):
 
     f.close()
     return board
-            
-b = read_board("board2")
-print_board(b)
-
 
     
 
