@@ -14,7 +14,7 @@ def print_board(board):
     for row in board:
         rowStr = ""
         for spot in row:
-            rowStr+= spot + " "
+            rowStr+= spot + "\t"
         print(rowStr)
 
 # Save board to file
@@ -31,7 +31,7 @@ def save_board(board, filename):
 def read_board(filename):
     f = open(filename, 'r')
     boardStr = f.read(1000)
-    chars = boardStr.split(' ')
+    chars = boardStr.split('\t')
 
     i = 0
     newboard = []
