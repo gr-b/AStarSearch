@@ -1,12 +1,12 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
 import random
-spots = ['0','1','2','3','4','5','6','7','8','9','#']
+spots = ['1','2','3','4','5','6','7','8','9','#']
 
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
-    board[random.randint(0,n)][random.randint(0,m)] = 'S'
-    board[random.randint(0,n)][random.randint(0,m)] = 'G'
+    board[random.randint(0,m-1)][random.randint(0,n-1)] = 'S'
+    board[random.randint(0,m-1)][random.randint(0,n-1)] = 'G'
     return board
 
 
@@ -16,8 +16,7 @@ def print_board(board):
         rowStr = ""
         for spot in row:
             rowStr+= spot + "\t"
-        bstr += rowStr
-    print(bstr)
+        print(rowStr)
         #print(rowStr)
 
 # Save board to file
@@ -70,7 +69,8 @@ def read_board(filename):
     f.close()
     return board
             
-
+b = read_board("board2")
+print_board(b)
 
 
     
