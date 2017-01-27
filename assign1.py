@@ -11,7 +11,6 @@ def getGoalPosition(board):
         for col_i, col in enumerate(board):
             if board[row_i][col_i] == 'G':
                 return row_i, col_i
-    print("No G detected")
     return None
 
 def getVerticalAndHorizontalDistance(node, board):
@@ -105,15 +104,15 @@ def read_board(filename):
     #print(chars)
 
     board = []
-    rowRead = []
+    row = []
     for c in chars:
         if "\n" in c:
-            board += [rowRead]
-            rowRead = []
+            board += [row]
+            row = []
             if len(c)>1:
-                rowRead += c[1]
+                row += c[1]
         else:
-            rowRead += c
+            row += c
 
     f.close()
     return board
@@ -170,7 +169,7 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
                         return
             addToList(n, queue)
 
-def expandNode(node, queue, board, h):
+def expandNode(node, queue, board, h): 
     f = node.direction                     #        [0, -1]
     r = [-1*f[1], f[0]]                    #  [-1,0]       [1,0]
     l = [f[1], -1*f[0]]                    #        [0, 1]
@@ -244,27 +243,95 @@ def run_trial(board):
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
-        #print("Actions:")
-        #for action in actions:
-        #     if action == "r":
-        #         print("Turn Right")
-        #     elif action == "l":
-        #         print("Turn Left")
-        #     elif action == "f":
-        #         print("Forward")
-        #     elif action == "j":
-        #         print("Leap")
+        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print("Actions:")
+        for action in actions:
+            if action == "r":
+                print("Turn Right")
+            elif action == "l":
+                print("Turn Left")
+            elif action == "f":
+                print("Forward")
+            elif action == "j":
+                print("Leap")
+        print("")
+
+
+def run_trial_single(board, h_number, heuristics):
+
+    h = heuristics[h_number-1]
+    start = time.time()
+    initNode = get_initial_node(board)
+    initNode.hCost = h(initNode, board)
+    actions, score, expanded, depth = search_node(initNode, board, h)
+    hString = str(h).split()[1]
+    print("")
+    elapsed = time.time() - start
+    print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
+        expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
+    print("Actions:")
+    for action in actions:
+        if action == "r":
+            print("Turn Right")
+        elif action == "l":
+            print("Turn Left")
+        elif action == "f":
+            print("Forward")
+        elif action == "j":
+            print("Leap")
+    print("")
+
+# closed = []
+#
+# board = gen_board(30,30)
+# run_trial(board)
+
 
 closed = []
 
-board = gen_board(20,20)
-#boardTrial = read_board("glitchboard")
-run_trial(board)
-"""
+
+def main():
+    """
+    The command line takes in the filename and the heuristic number
+    :return:
+    """
+    import os.path
+
+    arguments = sys.argv
+
+    if len(arguments) != 3:
+        print("The input has to inclde two parameters: the file name of the board and the heuristic number to use.")
+        exit()
+
+    heuristics = [h1, h2, h3, h4, h5, h6]
+
+    file_name = arguments[1]
+    heuristic_number = int(arguments[2])
+
+
+    if not 0 < heuristic_number <= len(heuristics):
+        print("The heuristic has to be from range 0 to %s" % len(heuristics))
+        exit()
+
+
+    heuristics = [h1, h2, h3, h4, h5, h6]
+
+    if not os.path.exists(file_name):
+        print("The file %s was not found." % file_name)
+        exit()
+
+    board = read_board(file_name)
+
+    run_trial_single(board, heuristic_number, heuristics)
+
+if __name__ == '__main__':
+    main()
+
+
 b = gen_board(10,10)#read_board("board1")
 s = get_initial_node(b)
 
+"""
 print("Heuristic Six:")
 s.hCost = h6(s, b)
 result = search_node(s, b, h6)
