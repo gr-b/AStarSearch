@@ -119,6 +119,21 @@ def read_board(filename):
     f.close()
     return board
 
+def getBranchingFactor(nodes, depth, tolerance):
+    low = 0.0
+    high = pow(nodes, 2.0/depth)
+    while(True):
+        avg = (low + high) / 2
+        testNodes = 0
+        for i in range(depth):
+            testNodes += pow(avg, i+1)
+        if(abs(testNodes - nodes) <= tolerance):
+            return avg
+        if(testNodes > nodes):
+            high = avg
+        else:
+            low = avg
+
 def addToList(node, queue):
     i = 0
     cost = node.cost + node.hCost
