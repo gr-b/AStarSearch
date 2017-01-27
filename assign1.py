@@ -42,8 +42,10 @@ def h4(node, board):
 
 def h5(node, board):
     """
-    If it has to turn once, its 1/3 the cost of the current node
-    If it has to turn twice, its 2/3 the cost of the current node
+    Add 1/3 of the current tile cost to Manhattan distance if the node is not facing
+    the vertical direction of the goal
+    Add 1/3 of the current tile cost to Manhattan Distance if the node is not facing
+    the horizontal direction of the goal
     :param node:
     :return:
     """
@@ -60,9 +62,9 @@ def h5(node, board):
     col_dist = goal_position[1] - node_col
 
     if (row_dist * node.direction[0] < 0) or (col_dist * node.direction[1] < 0):
-        manhattan_distance += 1
+        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
     if (row_dist * node.direction[0] < 0) and (col_dist * node.direction[1] < 0):
-        manhattan_distance += 1
+        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
 
     return manhattan_distance
 
@@ -128,9 +130,9 @@ def addToList(node, queue):
     
 def getCost(str):
     if(str[0] == 'S' or str[0] == 'G'):
-        return 1;
+        return 1
     else:
-        return int(str);
+        return int(str)
 
 def inBoard(spot, board):
     return ((spot[0] < len(board[0])) and (spot[0] >= 0) and (spot[1] < len(board)) and (spot[1] >= 0))
@@ -243,7 +245,7 @@ def run_trial(board):
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
         print("Actions:")
         for action in actions:
             if action == "r":
@@ -279,16 +281,8 @@ def run_trial_single(board, h_number, heuristics):
             print("Forward")
         elif action == "j":
             print("Leap")
-    print("")
-
-# closed = []
-#
-# board = gen_board(30,30)
-# run_trial(board)
-
 
 closed = []
-
 
 def main():
     """
@@ -300,7 +294,7 @@ def main():
     arguments = sys.argv
 
     if len(arguments) != 3:
-        print("The input has to inclde two parameters: the file name of the board and the heuristic number to use.")
+        print("The input has to include two parameters: the file name of the board and the heuristic number to use.")
         exit()
 
     heuristics = [h1, h2, h3, h4, h5, h6]
@@ -328,37 +322,5 @@ if __name__ == '__main__':
     main()
 
 
-b = gen_board(10,10)#read_board("board1")
-s = get_initial_node(b)
-
-"""
-print("Heuristic Six:")
-s.hCost = h6(s, b)
-result = search_node(s, b, h6)
-print(result)
-
-print("Heuristic Five:")
-s.hCost = h5(s, b)
-result = search_node(s, b, h5)
-print("")
-
-print("Heuristic four:")
-s.hCost = h4(s, b)
-result = search_node(s, b, h4)
-print("")
-
-print("Heuristic three:")
-s.hCost = h3(s, b)
-result = search_node(s, b, h3)
-print("")
-
-print("Heuristic two:")
-s.hCost = h2(s, b)
-result = search_node(s, b, h2)
-print("")
-
-print("Heuristic one:")
-s.hCost = h1(s, b)
-result = search_node(s, b, h1)
-print("")
-"""
+#b = gen_board(10,10)#read_board("board1")
+#s = get_initial_node(b)
