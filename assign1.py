@@ -151,6 +151,7 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
             else:
                 cost += getCost(boardVal)
             n = Node(spot[1], spot[0], direction, cost, 0, list(newActions))
+            n.d = node.d+1
             #node.visitedCells += [spot]
             #n.visitedCells = list(node.visitedCells)
             n.hCost = h(n, board)
@@ -200,10 +201,11 @@ def search_node(start, board, h):
         #    sys.stdout.write("|")
         #if expanded % 1000 == 0:
             #print(node.actions)
+    #print("DEPTH: "  + str(node.d))
     #print(node.actions)
     #print("Score: " + str(500-node.cost))
     #print("Nodes expanded: " + str(expanded))
-    return (node.actions, 500-node.cost, expanded)
+    return (node.actions, 500-node.cost, expanded, node.d)
 
 # Creates a node with the position of the s in the given board.
 def get_initial_node(board):
@@ -222,6 +224,7 @@ class Node(object):
         self.cost = cost
         self.hCost = hCost
         self.actions = actions
+        self.d = 0;
 
 def run_trial(board):
     print_board(board)
@@ -235,7 +238,19 @@ def run_trial(board):
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) + "| " + str(elapsed))
+        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print("Actions:")
+        for action in actions:
+            if action == "r":
+                print("Turn Right")
+            elif action == "l":
+                print("Turn Left")
+            elif action == "f":
+                print("Forward")
+            elif action == "j":
+                print("Leap")
+        print("")
+
 
 def run_trial_single(board, h_number, heuristics):
 
@@ -254,6 +269,7 @@ def run_trial_single(board, h_number, heuristics):
 #
 # board = gen_board(30,30)
 # run_trial(board)
+
 
 closed = []
 
@@ -295,7 +311,6 @@ if __name__ == '__main__':
     main()
 
 
-"""
 b = gen_board(10,10)#read_board("board1")
 s = get_initial_node(b)
 
