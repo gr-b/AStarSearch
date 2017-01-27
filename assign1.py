@@ -239,6 +239,17 @@ def run_trial(board):
         print("")
         elapsed = time.time() - start
         print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print("Actions:")
+        for action in actions:
+            if action == "r":
+                print("Turn Right")
+            elif action == "l":
+                print("Turn Left")
+            elif action == "f":
+                print("Forward")
+            elif action == "j":
+                print("Leap")
+        print("")
 
 closed = []
 
