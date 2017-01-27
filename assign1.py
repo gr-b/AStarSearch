@@ -101,7 +101,7 @@ def save_board(board, filename):
 
 def read_board(filename):
     f = open(filename, 'r')
-    boardStr = f.read(10000)
+    boardStr = f.read(20000)
     chars = boardStr.split('\t')
     #print(chars)
 
@@ -260,7 +260,7 @@ def run_trial(board):
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print(hString + " : Number of Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) + " | Depth: " + str(depth)) #"| " + str(elapsed))
         print("Actions:")
         for action in actions:
             if action == "r":
@@ -284,8 +284,8 @@ def run_trial_single(board, h_number, heuristics):
     hString = str(h).split()[1]
     print("")
     elapsed = time.time() - start
-    print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
-        expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
+    print(hString + " : Number of Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
+        expanded) + " | Depth: " + str(depth)  + " | " + str(elapsed))
     print("Actions:")
     for action in actions:
         if action == "r":
@@ -332,6 +332,7 @@ def main():
     board = read_board(file_name)
 
     run_trial_single(board, heuristic_number, heuristics)
+
 
 if __name__ == '__main__':
     main()
