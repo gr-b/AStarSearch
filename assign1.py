@@ -284,7 +284,7 @@ def run_trial_single(board, h_number, heuristics):
     hString = str(h).split()[1]
     print("")
     elapsed = time.time() - start
-    print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
+    print(hString + " : Num Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
         expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
     print("Actions:")
     for action in actions:
@@ -296,6 +296,7 @@ def run_trial_single(board, h_number, heuristics):
             print("Forward")
         elif action == "j":
             print("Leap")
+    print("")
 
 closed = []
 
