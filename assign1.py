@@ -80,7 +80,6 @@ def print_board(board):
         print(rowStr)
 
 # Save board to file
-
 def save_board(board, filename):
     f = open(filename,'w')
     for row in board:
