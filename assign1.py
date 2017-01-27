@@ -1,45 +1,46 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
-import random
+import random, sys, time
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
-def h1(node):
+def h1(node, board):
     return 0
 
-def getGoalPosition():
-    for row_i, row in enumerate(b):
-        for col_i, col in enumerate(b):
-            if b[row_i][col_i] == 'G':
+def getGoalPosition(board):
+    for row_i, row in enumerate(board):
+        for col_i, col in enumerate(board):
+            if board[row_i][col_i] == 'G':
                 return row_i, col_i
     return None
 
-def getVerticalAndHorizontalDistance(node):
+def getVerticalAndHorizontalDistance(node, board):
+    goal_position = getGoalPosition(board)
     vertical_distance = abs(goal_position[1] - node.col)  # get vertical distance
     horizontal_distance = abs(goal_position[0] - node.row)  # get horizontal distance
 
     return vertical_distance, horizontal_distance
 
-def h2(node):
-    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+def h2(node, board):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node, board)
     dist_to_use = min(vertical_distance, horizontal_distance)
 
     return dist_to_use
 
-def h3(node):
-    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+def h3(node, board):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node, board)
 
     dist_to_use = max(vertical_distance, horizontal_distance)
 
     return dist_to_use
 
-# manhatten distance
-def h4(node):
-    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+# Manhattan distance
+def h4(node, board):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node, board)
 
 
     return vertical_distance + horizontal_distance
 
-def h5(node):
+def h5(node, board):
     """
     If it has to turn once, its 1/3 the cost of the current node
     If it has to turn twice, its 2/3 the cost of the current node
@@ -51,9 +52,9 @@ def h5(node):
     node_row = node.row
     node_cost = node.cost
 
-    manhattan_distance = h4(node)
+    manhattan_distance = h4(node, board)
 
-
+    goal_position = getGoalPosition(board)
     if node_col == goal_position[1] or node_row == goal_position[1]:
         pass
     else:
@@ -61,8 +62,8 @@ def h5(node):
 
     return manhattan_distance
 
-def h6(node):
-    return h5(node) * 3
+def h6(node, board):
+    return h5(node, board) * 3
 
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
@@ -76,7 +77,10 @@ def print_board(board):
     for row in board:
         rowStr = ""
         for spot in row:
-            rowStr+= spot + "\t"
+            if 'S' in spot or 'G' in spot:
+                rowStr += "|" + spot + "|\t"
+            else:
+                rowStr+= spot + "\t"
         print(rowStr)
 
 # Save board to file
@@ -132,6 +136,8 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
     else:
         dist = 1
     spot = [node.col + dist*direction[0], node.row + dist*direction[1]]; #col, row (x, y)
+    if spot in node.visitedCells:
+        return
     if(inBoard(spot, board)):
         boardVal = board[spot[1]][spot[0]]
         if(boardVal != "#"):
@@ -143,8 +149,10 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
             else:
                 cost += getCost(boardVal)
             n = Node(spot[1], spot[0], direction, cost, 0, list(newActions))
-            n.hCost = h(n)
+            n.visitedCells = list(node.visitedCells)
+            n.hCost = h(n, board)
             addToList(n, queue)
+            node.visitedCells += [spot]
         
 
 def expandNode(node, queue, board, h): 
@@ -177,10 +185,14 @@ def search_node(start, board, h):
         expandNode(node, queue, board, h);
         node = queue.pop()
         expanded += 1
-    print(node.actions)
-    print("Score: " + str(500-node.cost))
-    print("Nodes expanded: " + str(expanded))
-    return node
+        if expanded % 10 == 0:
+            sys.stdout.write("|")
+        if expanded % 1000 == 0:
+            print(node.actions)
+    #print(node.actions)
+    #print("Score: " + str(500-node.cost))
+    #print("Nodes expanded: " + str(expanded))
+    return (node.actions, 500-node.cost, expanded)
 
 # Creates a node with the position of the s in the given board.
 def get_initial_node(board):
@@ -189,16 +201,7 @@ def get_initial_node(board):
             if board[i][j] == 'S':
                 row, col = (i, j)
     return Node(row, col, [0,-1], 0, 0, []) #row, col
-    
-    
-    
 
-class Space(object):
-    def __init__(self, x, y, terrain, accessible):
-        self.x = x
-        self.y = y
-        self.terrain = terrain
-        self.accessible = accessible
 
 class Node(object):
     def __init__(self, row, col, direction, cost, hCost, actions):
@@ -208,39 +211,54 @@ class Node(object):
         self.cost = cost
         self.hCost = hCost
         self.actions = actions
+        self.visitedCells = []
 
-b = read_board("board1")
+def run_trial(board):
+    print_board(board)
+    heuristics = [h1, h2, h3, h4, h5, h6]
+    for h in heuristics:
+        start = time.time()
+        initNode = get_initial_node(board)
+        initNode.hCost = h(initNode, board)
+        actions, score, expanded = search_node(initNode, board, h)
+        hString = str(h).split()[1]
+        print("")
+        elapsed = time.time() - start
+        print(hString + " : " + str(actions) + " | Score: " + str(score) + " | Expanded: " + str(expanded) + "| " + str(elapsed))
+
+board = gen_board(10,10)
+run_trial(board)
+"""
+b = gen_board(10,10)#read_board("board1")
 s = get_initial_node(b)
 
-goal_position = getGoalPosition()
-
 print("Heuristic Six:")
-s.hCost = h6(s)
+s.hCost = h6(s, b)
 result = search_node(s, b, h6)
-print("")
+print(result)
 
 print("Heuristic Five:")
-s.hCost = h5(s)
+s.hCost = h5(s, b)
 result = search_node(s, b, h5)
 print("")
 
 print("Heuristic four:")
-s.hCost = h4(s)
+s.hCost = h4(s, b)
 result = search_node(s, b, h4)
 print("")
 
 print("Heuristic three:")
-s.hCost = h3(s)
+s.hCost = h3(s, b)
 result = search_node(s, b, h3)
 print("")
 
 print("Heuristic two:")
-s.hCost = h2(s)
+s.hCost = h2(s, b)
 result = search_node(s, b, h2)
 print("")
 
 print("Heuristic one:")
-s.hCost = h1(s)
+s.hCost = h1(s, b)
 result = search_node(s, b, h1)
 print("")
-
+"""
