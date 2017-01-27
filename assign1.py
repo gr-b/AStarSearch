@@ -234,7 +234,7 @@ def run_trial(board):
         start = time.time()
         initNode = get_initial_node(board)
         initNode.hCost = h(initNode, board)
-        actions, score, expanded = search_node(initNode, board, h)
+        actions, score, expanded, depth = search_node(initNode, board, h)
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
@@ -258,12 +258,23 @@ def run_trial_single(board, h_number, heuristics):
     start = time.time()
     initNode = get_initial_node(board)
     initNode.hCost = h(initNode, board)
-    actions, score, expanded = search_node(initNode, board, h)
+    actions, score, expanded, depth = search_node(initNode, board, h)
     hString = str(h).split()[1]
     print("")
     elapsed = time.time() - start
     print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
-        expanded) + "| " + str(elapsed))
+        expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
+    print("Actions:")
+    for action in actions:
+        if action == "r":
+            print("Turn Right")
+        elif action == "l":
+            print("Turn Left")
+        elif action == "f":
+            print("Forward")
+        elif action == "j":
+            print("Leap")
+    print("")
 
 # closed = []
 #
@@ -314,6 +325,7 @@ if __name__ == '__main__':
 b = gen_board(10,10)#read_board("board1")
 s = get_initial_node(b)
 
+"""
 print("Heuristic Six:")
 s.hCost = h6(s, b)
 result = search_node(s, b, h6)
