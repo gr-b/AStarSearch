@@ -1,7 +1,7 @@
 # Randomly generate an n by m board.
 # has spots 0-9, S, G, and #
 import random, sys, time
-spots = ['1','2','3','4','5','6','7','8','9','#']
+spots = ['1','2','3','4','5','6','7','8','9','#','#','#']
 
 def h1(node, board):
     return 0
@@ -58,7 +58,7 @@ def h5(node, board):
     if node_col == goal_position[1] or node_row == goal_position[1]:
         pass
     else:
-        manhattan_distance += (1/3)*node_cost
+        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
 
     return manhattan_distance
 
@@ -119,6 +119,8 @@ def addToList(node, queue):
     while(i < len(queue) and cost < queue[i].cost + queue[i].hCost):
         i += 1
     queue.insert(i, node)
+    #if len(queue) % 100 == 0:
+        #print(len(queue))
     
 def getCost(str):
     if(str[0] == 'S' or str[0] == 'G'):
@@ -136,8 +138,8 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
     else:
         dist = 1
     spot = [node.col + dist*direction[0], node.row + dist*direction[1]]; #col, row (x, y)
-    if spot in node.visitedCells:
-        return
+    #if spot in node.visitedCells:
+    #    return
     if(inBoard(spot, board)):
         boardVal = board[spot[1]][spot[0]]
         if(boardVal != "#"):
@@ -149,11 +151,18 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
             else:
                 cost += getCost(boardVal)
             n = Node(spot[1], spot[0], direction, cost, 0, list(newActions))
-            n.visitedCells = list(node.visitedCells)
+            #node.visitedCells += [spot]
+            #n.visitedCells = list(node.visitedCells)
             n.hCost = h(n, board)
+            for qnode in queue:
+                if qnode.row == n.row and qnode.col == n.col:
+                    if n.cost > qnode.cost:
+                        return
+            for cnode in closed:
+                if cnode.row == n.row and cnode.col == n.col:
+                    if n.cost > cnode.cost:
+                        return
             addToList(n, queue)
-            node.visitedCells += [spot]
-        
 
 def expandNode(node, queue, board, h): 
     f = node.direction                     #        [0, -1]
@@ -173,6 +182,8 @@ def expandNode(node, queue, board, h):
     tryMove(node, queue, board, h, b, 2, 0, ["r", "r", "f"]) #back
     tryMove(node, queue, board, h, b, 2, 1, ["r", "r", "j"]) #jump back
 
+    closed.append(node)
+
 
 # queue - A sorted list of nodes to expand. Sorted based on the cost to
 #   get to the node plus the heuristic cost. (starts continaing only the start node)
@@ -185,10 +196,10 @@ def search_node(start, board, h):
         expandNode(node, queue, board, h);
         node = queue.pop()
         expanded += 1
-        if expanded % 10 == 0:
-            sys.stdout.write("|")
-        if expanded % 1000 == 0:
-            print(node.actions)
+        #if expanded % 100 == 0:
+        #    sys.stdout.write("|")
+        #if expanded % 1000 == 0:
+            #print(node.actions)
     #print(node.actions)
     #print("Score: " + str(500-node.cost))
     #print("Nodes expanded: " + str(expanded))
@@ -211,11 +222,11 @@ class Node(object):
         self.cost = cost
         self.hCost = hCost
         self.actions = actions
-        self.visitedCells = []
 
 def run_trial(board):
     print_board(board)
     heuristics = [h1, h2, h3, h4, h5, h6]
+    heuristics.reverse()
     for h in heuristics:
         start = time.time()
         initNode = get_initial_node(board)
@@ -225,6 +236,8 @@ def run_trial(board):
         print("")
         elapsed = time.time() - start
         print(hString + " : " + str(actions) + " | Score: " + str(score) + " | Expanded: " + str(expanded) + "| " + str(elapsed))
+
+closed = []
 
 board = gen_board(10,10)
 run_trial(board)
