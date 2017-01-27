@@ -11,6 +11,7 @@ def getGoalPosition(board):
         for col_i, col in enumerate(board):
             if board[row_i][col_i] == 'G':
                 return row_i, col_i
+    print("No G detected")
     return None
 
 def getVerticalAndHorizontalDistance(node, board):
@@ -55,10 +56,14 @@ def h5(node, board):
     manhattan_distance = h4(node, board)
 
     goal_position = getGoalPosition(board)
-    if node_col == goal_position[1] or node_row == goal_position[1]:
-        pass
-    else:
-        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
+
+    row_dist = goal_position[0] - node_row
+    col_dist = goal_position[1] - node_col
+
+    if (row_dist * node.direction[0] < 0) or (col_dist * node.direction[1] < 0):
+        manhattan_distance += 1
+    if (row_dist * node.direction[0] < 0) and (col_dist * node.direction[1] < 0):
+        manhattan_distance += 1
 
     return manhattan_distance
 
@@ -95,20 +100,20 @@ def save_board(board, filename):
 
 def read_board(filename):
     f = open(filename, 'r')
-    boardStr = f.read(1000)
+    boardStr = f.read(10000)
     chars = boardStr.split('\t')
     #print(chars)
 
     board = []
-    row = []
+    rowRead = []
     for c in chars:
         if "\n" in c:
-            board += [row]
-            row = []
+            board += [rowRead]
+            rowRead = []
             if len(c)>1:
-                row += c[1]
+                rowRead += c[1]
         else:
-            row += c
+            rowRead += c
 
     f.close()
     return board
@@ -165,7 +170,7 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
                         return
             addToList(n, queue)
 
-def expandNode(node, queue, board, h): 
+def expandNode(node, queue, board, h):
     f = node.direction                     #        [0, -1]
     r = [-1*f[1], f[0]]                    #  [-1,0]       [1,0]
     l = [f[1], -1*f[0]]                    #        [0, 1]
@@ -190,11 +195,11 @@ def expandNode(node, queue, board, h):
 #   get to the node plus the heuristic cost. (starts continaing only the start node)
 # h - The heuristic function to use. 
 def search_node(start, board, h):
+    expanded = 0
     queue = [start]
     node = queue.pop()
-    expanded = 0
     while(board[node.row][node.col][0] != 'G'):
-        expandNode(node, queue, board, h);
+        expandNode(node, queue, board, h)
         node = queue.pop()
         expanded += 1
         #if expanded % 100 == 0:
@@ -231,29 +236,30 @@ def run_trial(board):
     heuristics = [h1, h2, h3, h4, h5, h6]
     heuristics.reverse()
     for h in heuristics:
+        closed[:] = []
         start = time.time()
         initNode = get_initial_node(board)
         initNode.hCost = h(initNode, board)
-        actions, score, expanded, depth = search_node(initNode, board, h)
+        actions, score, expandedNodes, depth = search_node(initNode, board, h)
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expanded) +  " | depth: " + str(depth)) #"| " + str(elapsed))
-        print("Actions:")
-        for action in actions:
-            if action == "r":
-                print("Turn Right")
-            elif action == "l":
-                print("Turn Left")
-            elif action == "f":
-                print("Forward")
-            elif action == "j":
-                print("Leap")
-        print("")
+        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        #print("Actions:")
+        #for action in actions:
+        #     if action == "r":
+        #         print("Turn Right")
+        #     elif action == "l":
+        #         print("Turn Left")
+        #     elif action == "f":
+        #         print("Forward")
+        #     elif action == "j":
+        #         print("Leap")
 
 closed = []
 
-board = gen_board(40,40)
+board = gen_board(20,20)
+#boardTrial = read_board("glitchboard")
 run_trial(board)
 """
 b = gen_board(10,10)#read_board("board1")
