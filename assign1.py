@@ -149,10 +149,9 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
             else:
                 cost += getCost(boardVal)
             n = Node(spot[1], spot[0], direction, cost, 0, list(newActions))
-            n.visitedCells = list(node.visitedCells)
+            n.visitedCells = node.visitedCells + [spot]
             n.hCost = h(n, board)
             addToList(n, queue)
-            node.visitedCells += [spot]
         
 
 def expandNode(node, queue, board, h): 
@@ -212,10 +211,19 @@ class Node(object):
         self.hCost = hCost
         self.actions = actions
         self.visitedCells = []
+        
+# class Node2(object):
+#     def __init__(self, pos, dir, cost, hCost, children, parent):
+#         self.pos = pos #[row, col]
+#         self.dir = dir
+#         self.cost = cost
+#         self.hCost = hCose
+#         self.children = children
+#         self.parent = parent
 
 def run_trial(board):
     print_board(board)
-    heuristics = [h1, h2, h3, h4, h5, h6]
+    heuristics = [h6, h5, h4, h3, h2, h1]
     for h in heuristics:
         start = time.time()
         initNode = get_initial_node(board)
@@ -228,37 +236,3 @@ def run_trial(board):
 
 board = gen_board(10,10)
 run_trial(board)
-"""
-b = gen_board(10,10)#read_board("board1")
-s = get_initial_node(b)
-
-print("Heuristic Six:")
-s.hCost = h6(s, b)
-result = search_node(s, b, h6)
-print(result)
-
-print("Heuristic Five:")
-s.hCost = h5(s, b)
-result = search_node(s, b, h5)
-print("")
-
-print("Heuristic four:")
-s.hCost = h4(s, b)
-result = search_node(s, b, h4)
-print("")
-
-print("Heuristic three:")
-s.hCost = h3(s, b)
-result = search_node(s, b, h3)
-print("")
-
-print("Heuristic two:")
-s.hCost = h2(s, b)
-result = search_node(s, b, h2)
-print("")
-
-print("Heuristic one:")
-s.hCost = h1(s, b)
-result = search_node(s, b, h1)
-print("")
-"""
