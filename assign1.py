@@ -179,12 +179,14 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
             for qnode in queue:
                 if qnode.row == n.row and qnode.col == n.col:
                     if n.cost > qnode.cost:
-                        return
+                        return 0
             for cnode in closed:
                 if cnode.row == n.row and cnode.col == n.col:
                     if n.cost > cnode.cost:
-                        return
+                        return 0
             addToList(n, queue)
+            return 1
+    return 0
 
 def expandNode(node, queue, board, h): 
     f = node.direction                     #        [0, -1]
@@ -192,19 +194,23 @@ def expandNode(node, queue, board, h):
     l = [f[1], -1*f[0]]                    #        [0, 1]
     b = [-1*f[0], -1*f[1]]
     
-    tryMove(node, queue, board, h, f, 0, 0, ["f"]) #forward
-    tryMove(node, queue, board, h, f, 0, 1, ["j"]) #jump forward
+    expanded = 0
     
-    tryMove(node, queue, board, h, r, 1, 0, ["r", "f"]) #right
-    tryMove(node, queue, board, h, r, 1, 1, ["r", "j"]) #jump right
+    expanded += tryMove(node, queue, board, h, f, 0, 0, ["f"]) #forward
+    expanded += tryMove(node, queue, board, h, f, 0, 1, ["j"]) #jump forward
     
-    tryMove(node, queue, board, h, l, 1, 0, ["l", "f"]) #left
-    tryMove(node, queue, board, h, l, 1, 1, ["l", "j"]) #jump left
+    expanded += tryMove(node, queue, board, h, r, 1, 0, ["r", "f"]) #right
+    expanded += tryMove(node, queue, board, h, r, 1, 1, ["r", "j"]) #jump right
     
-    tryMove(node, queue, board, h, b, 2, 0, ["r", "r", "f"]) #back
-    tryMove(node, queue, board, h, b, 2, 1, ["r", "r", "j"]) #jump back
+    expanded += tryMove(node, queue, board, h, l, 1, 0, ["l", "f"]) #left
+    expanded += tryMove(node, queue, board, h, l, 1, 1, ["l", "j"]) #jump left
+    
+    expanded += tryMove(node, queue, board, h, b, 2, 0, ["r", "r", "f"]) #back
+    expanded += tryMove(node, queue, board, h, b, 2, 1, ["r", "r", "j"]) #jump back
 
     closed.append(node)
+    
+    return expanded
 
 
 # queue - A sorted list of nodes to expand. Sorted based on the cost to
@@ -212,10 +218,11 @@ def expandNode(node, queue, board, h):
 # h - The heuristic function to use. 
 def search_node(start, board, h):
     expanded = 0
+    generated = 0
     queue = [start]
     node = queue.pop()
     while(board[node.row][node.col][0] != 'G'):
-        expandNode(node, queue, board, h)
+        generated += expandNode(node, queue, board, h)
         node = queue.pop()
         expanded += 1
         #if expanded % 100 == 0:
@@ -226,7 +233,7 @@ def search_node(start, board, h):
     #print(node.actions)
     #print("Score: " + str(500-node.cost))
     #print("Nodes expanded: " + str(expanded))
-    return (node.actions, 500-node.cost, expanded, node.d)
+    return (node.actions, 500-node.cost, expanded, getBranchingFactor(generated, node.d, .001))
 
 # Creates a node with the position of the s in the given board.
 def get_initial_node(board):
@@ -256,12 +263,15 @@ def run_trial(board):
         start = time.time()
         initNode = get_initial_node(board)
         initNode.hCost = h(initNode, board)
-        actions, score, expandedNodes, depth = search_node(initNode, board, h)
+        actions, score, expandedNodes, ebf = search_node(initNode, board, h)
         hString = str(h).split()[1]
         print("")
         elapsed = time.time() - start
-        print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
-        print("Actions:")
+        #print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
+        print("Score:  " + str(score))
+        print("Number of actions:  " + str(len(actions)))
+        print("Number of nodes expanded:  " + str(expandedNodes))
+        print("Estimated branching factor:  %.2f" % ebf);
         for action in actions:
             if action == "r":
                 print("Turn Right")
@@ -280,13 +290,16 @@ def run_trial_single(board, h_number, heuristics):
     start = time.time()
     initNode = get_initial_node(board)
     initNode.hCost = h(initNode, board)
-    actions, score, expanded, depth = search_node(initNode, board, h)
+    actions, score, expanded, ebf = search_node(initNode, board, h)
     hString = str(h).split()[1]
     print("")
     elapsed = time.time() - start
-    print(hString + " : Num Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
-        expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
-    print("Actions:")
+    #print(hString + " : Num Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
+    #    expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
+    print("Score:  " + str(score))
+    print("Number of actions:  " + str(len(actions)))
+    print("Number of nodes expanded:  " + str(expanded))
+    print("Estimated branching factor:  %.2f" % ebf);
     for action in actions:
         if action == "r":
             print("Turn Right")
