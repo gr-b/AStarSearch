@@ -32,10 +32,37 @@ def h3(node):
 
     return dist_to_use
 
+# manhatten distance
 def h4(node):
     vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
 
+
     return vertical_distance + horizontal_distance
+
+def h5(node):
+    """
+    If it has to turn once, its 1/3 the cost of the current node
+    If it has to turn twice, its 2/3 the cost of the current node
+    :param node:
+    :return:
+    """
+    node_direction = node.direction
+    node_col = node.col
+    node_row = node.row
+    node_cost = node.cost
+
+    manhattan_distance = h4(node)
+
+
+    if node_col == goal_position[1] or node_row == goal_position[1]:
+        pass
+    else:
+        manhattan_distance += (1/3)*node_cost
+
+    return manhattan_distance
+
+def h6(node):
+    return h5(node) * 3
 
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
@@ -227,22 +254,32 @@ s = get_initial_node(b)
 
 goal_position = getGoalPosition()
 
-print "heuristic four"
+print("heuristic Six")
+s.hCost = h6(s)
+queue = [s]
+result = search_node(queue, b, h6)
+
+print("heuristic Five")
+s.hCost = h5(s)
+queue = [s]
+result = search_node(queue, b, h5)
+
+print("heuristic four")
 s.hCost = h4(s)
 queue = [s]
 result = search_node(queue, b, h4)
 
-print "heuristic three"
+print("heuristic three")
 s.hCost = h3(s)
 queue = [s]
 result = search_node(queue, b, h3)
 
-print "heuristic two"
+print("heuristic two")
 s.hCost = h2(s)
 queue = [s]
 result = search_node(queue, b, h2)
 
-print "heuristic one"
+print("heuristic one")
 
 s.hCost = h1(s)
 queue = [s]
