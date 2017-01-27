@@ -6,6 +6,21 @@ spots = ['1','2','3','4','5','6','7','8','9','#']
 def h0(node):
     return 0
 
+def getGoalPosition():
+    for row_i, row in enumerate(b):
+        for col_i, col in enumerate(b):
+            if b[row_i][col_i] == 'G':
+                return row_i, col_i
+    return None
+
+def h1(node):
+    vertical_distance = abs(goal_position[1] - node.col) # get vertical distance
+    horizontal_distance = abs(goal_position[0] - node.row) # get horizontal distance
+
+    dist_to_use = min(vertical_distance, horizontal_distance)
+
+    return dist_to_use
+
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
     board[random.randint(0,m-1)][random.randint(0,n-1)] = 'S'
@@ -193,6 +208,14 @@ class Node(object):
 
 b = read_board("board2")
 s = get_initial_node(b)
-s.hCost = h0(s)
+goal_position = getGoalPosition()
+s.hCost = h1(s)
 queue = [s]
-result = search_node(queue, b, h0)  
+print "heuristic one"
+result = search_node(queue, b, h1)
+
+print "heuristic zero"
+
+s.hCost = h0(s)
+result = search_node(queue, b, h0)
+
