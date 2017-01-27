@@ -3,7 +3,7 @@
 import random
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
-def h0(node):
+def h1(node):
     return 0
 
 def getGoalPosition():
@@ -13,13 +13,29 @@ def getGoalPosition():
                 return row_i, col_i
     return None
 
-def h1(node):
-    vertical_distance = abs(goal_position[1] - node.col) # get vertical distance
-    horizontal_distance = abs(goal_position[0] - node.row) # get horizontal distance
+def getVerticalAndHorizontalDistance(node):
+    vertical_distance = abs(goal_position[1] - node.col)  # get vertical distance
+    horizontal_distance = abs(goal_position[0] - node.row)  # get horizontal distance
 
+    return vertical_distance, horizontal_distance
+
+def h2(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
     dist_to_use = min(vertical_distance, horizontal_distance)
 
     return dist_to_use
+
+def h3(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+
+    dist_to_use = max(vertical_distance, horizontal_distance)
+
+    return dist_to_use
+
+def h4(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+
+    return vertical_distance + horizontal_distance
 
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
@@ -206,16 +222,29 @@ class Node(object):
         self.hCost = hCost
         self.actions = actions
 
-b = read_board("board2")
+b = read_board("board1")
 s = get_initial_node(b)
+
 goal_position = getGoalPosition()
+
+print "heuristic four"
+s.hCost = h4(s)
+queue = [s]
+result = search_node(queue, b, h4)
+
+print "heuristic three"
+s.hCost = h3(s)
+queue = [s]
+result = search_node(queue, b, h3)
+
+print "heuristic two"
+s.hCost = h2(s)
+queue = [s]
+result = search_node(queue, b, h2)
+
+print "heuristic one"
+
 s.hCost = h1(s)
 queue = [s]
-print "heuristic one"
 result = search_node(queue, b, h1)
-
-print "heuristic zero"
-
-s.hCost = h0(s)
-result = search_node(queue, b, h0)
 
