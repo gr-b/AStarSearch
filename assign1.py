@@ -3,8 +3,66 @@
 import random
 spots = ['1','2','3','4','5','6','7','8','9','#']
 
-def h0(node):
+def h1(node):
     return 0
+
+def getGoalPosition():
+    for row_i, row in enumerate(b):
+        for col_i, col in enumerate(b):
+            if b[row_i][col_i] == 'G':
+                return row_i, col_i
+    return None
+
+def getVerticalAndHorizontalDistance(node):
+    vertical_distance = abs(goal_position[1] - node.col)  # get vertical distance
+    horizontal_distance = abs(goal_position[0] - node.row)  # get horizontal distance
+
+    return vertical_distance, horizontal_distance
+
+def h2(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+    dist_to_use = min(vertical_distance, horizontal_distance)
+
+    return dist_to_use
+
+def h3(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+
+    dist_to_use = max(vertical_distance, horizontal_distance)
+
+    return dist_to_use
+
+# manhatten distance
+def h4(node):
+    vertical_distance, horizontal_distance = getVerticalAndHorizontalDistance(node)
+
+
+    return vertical_distance + horizontal_distance
+
+def h5(node):
+    """
+    If it has to turn once, its 1/3 the cost of the current node
+    If it has to turn twice, its 2/3 the cost of the current node
+    :param node:
+    :return:
+    """
+    node_direction = node.direction
+    node_col = node.col
+    node_row = node.row
+    node_cost = node.cost
+
+    manhattan_distance = h4(node)
+
+
+    if node_col == goal_position[1] or node_row == goal_position[1]:
+        pass
+    else:
+        manhattan_distance += (1/3)*node_cost
+
+    return manhattan_distance
+
+def h6(node):
+    return h5(node) * 3
 
 def gen_board(n, m):
     board = [[random.choice(spots) for i in range(n)] for i in range(m)]
@@ -75,13 +133,9 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
     else:
         dist = 1
     spot = [node.col + dist*direction[0], node.row + dist*direction[1]]; #col, row (x, y)
-    #print("Current row: " + str(node.row) + ", col: " + str(node.col) + ", facing: [" + str(node.direction[0]) + ", " + str(node.direction[1]) + "]")
-    #print("Checking row: " + str(spot[1]) + ", col: " + str(spot[0]))
     if(inBoard(spot, board)):
-        #print(" In board");
         boardVal = board[spot[1]][spot[0]]
         if(boardVal != "#"):
-            #print(" Is valid")
             for string in appendList:
                 newActions.append(string)
             cost = node.cost + (1/3) * turns * getCost(board[node.row][node.col])
@@ -118,7 +172,6 @@ def expandNode(node, queue, board, h):
 def search_node(queue, board, h, maxDepth):
     if(maxDepth > 0): 
         node = queue.pop()
-        print("POPPED: row: " + str(node.row) + ", col: " + str(node.col))
         if(board[node.row][node.col][0] == 'G'):
             print(node.actions)
             return node
@@ -156,6 +209,38 @@ class Node(object):
 
 b = read_board("board2")
 s = get_initial_node(b)
-s.hCost = h0(s)
+
+goal_position = getGoalPosition()
+
+print("heuristic Six")
+s.hCost = h6(s)
 queue = [s]
-result = search_node(queue, b, h0, 999999)  
+result = search_node(queue, b, h6, 999999)
+
+print("heuristic Five")
+s.hCost = h5(s)
+queue = [s]
+result = search_node(queue, b, h5, 999999)
+
+print("heuristic four")
+s.hCost = h4(s)
+queue = [s]
+
+result = search_node(queue, b, h4, 999999)
+
+print("heuristic three")
+s.hCost = h3(s)
+queue = [s]
+result = search_node(queue, b, h3, 999999)
+
+print("heuristic two")
+s.hCost = h2(s)
+queue = [s]
+result = search_node(queue, b, h2, 999999)
+
+print("heuristic one")
+
+s.hCost = h1(s)
+queue = [s]
+result = search_node(queue, b, h1, 999999)
+
