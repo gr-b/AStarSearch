@@ -166,17 +166,19 @@ def expandNode(node, queue, board, h):
     tryMove(node, queue, board, h, b, 2, 0, ["r", "r", "f"]) #back
     tryMove(node, queue, board, h, b, 2, 1, ["r", "r", "j"]) #jump back
 
+
 # queue - A sorted list of nodes to expand. Sorted based on the cost to
 #   get to the node plus the heuristic cost. (starts continaing only the start node)
 # h - The heuristic function to use. 
-def search_node(queue, board, h, maxDepth):
-    if(maxDepth > 0): 
-        node = queue.pop()
-        if(board[node.row][node.col][0] == 'G'):
-            print(node.actions)
-            return node
-        expandNode(node, queue, board, h);
-        search_node(queue, board, h, maxDepth - 1)
+def search_node(queue, board, h, expanded):
+    node = queue.pop()
+    if(board[node.row][node.col][0] == 'G'):
+        print(node.actions)
+        print("Score: " + str(500-node.cost))
+        print("Nodes expanded: " + str(expanded))
+        return node
+    expandNode(node, queue, board, h);
+    search_node(queue, board, h, expanded + 1)
     
     
 
@@ -207,40 +209,44 @@ class Node(object):
         self.hCost = hCost
         self.actions = actions
 
-b = read_board("board2")
+b = read_board("board1")
 s = get_initial_node(b)
 
 goal_position = getGoalPosition()
 
-print("heuristic Six")
+print("Heuristic Six:")
 s.hCost = h6(s)
 queue = [s]
-result = search_node(queue, b, h6, 999999)
+result = search_node(queue, b, h6, 0)
+print("")
 
-print("heuristic Five")
+print("Heuristic Five:")
 s.hCost = h5(s)
 queue = [s]
-result = search_node(queue, b, h5, 999999)
+result = search_node(queue, b, h5, 0)
+print("")
 
-print("heuristic four")
+print("Heuristic four:")
 s.hCost = h4(s)
 queue = [s]
+result = search_node(queue, b, h4, 0)
+print("")
 
-result = search_node(queue, b, h4, 999999)
-
-print("heuristic three")
+print("Heuristic three:")
 s.hCost = h3(s)
 queue = [s]
-result = search_node(queue, b, h3, 999999)
+result = search_node(queue, b, h3, 0)
+print("")
 
-print("heuristic two")
+print("Heuristic two:")
 s.hCost = h2(s)
 queue = [s]
-result = search_node(queue, b, h2, 999999)
+result = search_node(queue, b, h2, 0)
+print("")
 
-print("heuristic one")
-
+print("Heuristic one:")
 s.hCost = h1(s)
 queue = [s]
-result = search_node(queue, b, h1, 999999)
+result = search_node(queue, b, h1, 0)
+print("")
 
