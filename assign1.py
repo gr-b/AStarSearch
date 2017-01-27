@@ -170,17 +170,17 @@ def expandNode(node, queue, board, h):
 # queue - A sorted list of nodes to expand. Sorted based on the cost to
 #   get to the node plus the heuristic cost. (starts continaing only the start node)
 # h - The heuristic function to use. 
-def search_node(queue, board, h, expanded):
+def search_node(queue, board, h):
     node = queue.pop()
-    if(board[node.row][node.col][0] == 'G'):
-        print(node.actions)
-        print("Score: " + str(500-node.cost))
-        print("Nodes expanded: " + str(expanded))
-        return node
-    expandNode(node, queue, board, h);
-    search_node(queue, board, h, expanded + 1)
-    
-    
+    expanded = 0
+    while(board[node.row][node.col][0] != 'G'):
+        expandNode(node, queue, board, h);
+        node = queue.pop()
+        expanded += 1
+    print(node.actions)
+    print("Score: " + str(500-node.cost))
+    print("Nodes expanded: " + str(expanded))
+    return node
 
 # Creates a node with the position of the s in the given board.
 def get_initial_node(board):
@@ -217,36 +217,36 @@ goal_position = getGoalPosition()
 print("Heuristic Six:")
 s.hCost = h6(s)
 queue = [s]
-result = search_node(queue, b, h6, 0)
+result = search_node(queue, b, h6)
 print("")
 
 print("Heuristic Five:")
 s.hCost = h5(s)
 queue = [s]
-result = search_node(queue, b, h5, 0)
+result = search_node(queue, b, h5)
 print("")
 
 print("Heuristic four:")
 s.hCost = h4(s)
 queue = [s]
-result = search_node(queue, b, h4, 0)
+result = search_node(queue, b, h4)
 print("")
 
 print("Heuristic three:")
 s.hCost = h3(s)
 queue = [s]
-result = search_node(queue, b, h3, 0)
+result = search_node(queue, b, h3)
 print("")
 
 print("Heuristic two:")
 s.hCost = h2(s)
 queue = [s]
-result = search_node(queue, b, h2, 0)
+result = search_node(queue, b, h2)
 print("")
 
 print("Heuristic one:")
 s.hCost = h1(s)
 queue = [s]
-result = search_node(queue, b, h1, 0)
+result = search_node(queue, b, h1)
 print("")
 
