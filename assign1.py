@@ -62,9 +62,9 @@ def h5(node, board):
     col_dist = goal_position[1] - node_col
 
     if (row_dist * node.direction[0] < 0) or (col_dist * node.direction[1] < 0):
-        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
+        manhattan_distance += (1/3)
     if (row_dist * node.direction[0] < 0) and (col_dist * node.direction[1] < 0):
-        manhattan_distance += (1/3)*getCost(board[node.row][node.col])
+        manhattan_distance += (1/3)
 
     return manhattan_distance
 
@@ -301,15 +301,15 @@ def run_trial_single(board, h_number, heuristics):
     print("Number of actions:  " + str(len(actions)))
     print("Number of nodes expanded:  " + str(expanded))
     print("Estimated branching factor:  %.2f" % ebf);
-    for action in actions:
-        if action == "r":
-            print("Turn Right")
-        elif action == "l":
-            print("Turn Left")
-        elif action == "f":
-            print("Forward")
-        elif action == "j":
-            print("Leap")
+    # for action in actions:
+#         if action == "r":
+#             print("Turn Right")
+#         elif action == "l":
+#             print("Turn Left")
+#         elif action == "f":
+#             print("Forward")
+#         elif action == "j":
+#             print("Leap")
 
 closed = []
 
