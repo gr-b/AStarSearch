@@ -140,8 +140,6 @@ def addToList(node, queue):
     while(i < len(queue) and cost < queue[i].cost + queue[i].hCost):
         i += 1
     queue.insert(i, node)
-    #if len(queue) % 100 == 0:
-        #print(len(queue))
     
 def getCost(str):
     if(str[0] == 'S' or str[0] == 'G'):
@@ -159,8 +157,6 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
     else:
         dist = 1
     spot = [node.col + dist*direction[0], node.row + dist*direction[1]]; #col, row (x, y)
-    #if spot in node.visitedCells:
-    #    return
     if(inBoard(spot, board)):
         boardVal = board[spot[1]][spot[0]]
         if(boardVal != "#"):
@@ -173,8 +169,6 @@ def tryMove(node, queue, board, h, direction, turns, jump, appendList):
                 cost += getCost(boardVal)
             n = Node(spot[1], spot[0], direction, cost, 0, list(newActions))
             n.d = node.d+1
-            #node.visitedCells += [spot]
-            #n.visitedCells = list(node.visitedCells)
             n.hCost = h(n, board)
             for qnode in queue:
                 if qnode.row == n.row and qnode.col == n.col:
@@ -260,13 +254,11 @@ def run_trial(board):
     heuristics.reverse()
     for h in heuristics:
         closed[:] = []
-        start = time.time()
         initNode = get_initial_node(board)
         initNode.hCost = h(initNode, board)
         actions, score, expandedNodes, ebf = search_node(initNode, board, h)
         hString = str(h).split()[1]
         print("")
-        elapsed = time.time() - start
         #print(hString + " : Num Actions:" + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(expandedNodes) +  " | depth: " + str(depth)) #"| " + str(elapsed))
         print("Score:  " + str(score))
         print("Number of actions:  " + str(len(actions)))
@@ -287,13 +279,11 @@ def run_trial(board):
 def run_trial_single(board, h_number, heuristics):
 
     h = heuristics[h_number-1]
-    start = time.time()
     initNode = get_initial_node(board)
     initNode.hCost = h(initNode, board)
     actions, score, expanded, ebf = search_node(initNode, board, h)
     hString = str(h).split()[1]
     print("")
-    elapsed = time.time() - start
 
     #print(hString + " : Num Actions: " + str(len(actions)) + " | Score: " + str(score) + " | Expanded: " + str(
     #    expanded) + " | depth: " + str(depth))  # "| " + str(elapsed))
@@ -301,15 +291,16 @@ def run_trial_single(board, h_number, heuristics):
     print("Number of actions:  " + str(len(actions)))
     print("Number of nodes expanded:  " + str(expanded))
     print("Estimated branching factor:  %.2f" % ebf);
-    # for action in actions:
-#         if action == "r":
-#             print("Turn Right")
-#         elif action == "l":
-#             print("Turn Left")
-#         elif action == "f":
-#             print("Forward")
-#         elif action == "j":
-#             print("Leap")
+    for action in actions:
+        if action == "r":
+            print("Turn Right")
+        elif action == "l":
+            print("Turn Left")
+        elif action == "f":
+            print("Forward")
+        elif action == "j":
+            print("Leap")
+    print("")
 
 closed = []
 
